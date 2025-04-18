@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tic Tac Toe</title>
+  <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/2489/2489076.png" type="image/x-icon">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      background-size: 200% 200%;
+      animation: gradientAnimation 10s ease infinite;
+      color: white;
+    }
+
+    @keyframes gradientAnimation {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    h1 {
+      font-size: 3em;
+      margin: 0;
+      color: white;
+      letter-spacing: 3px;
+    }
+
+    .signature {
+      font-size: 1.1em;
+      margin-top: 10px;
+      color: rgba(255,255,255,0.8);
+    }
+
+    .signature span {
+      font-weight: bold;
+      color: #ffcc00;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 320px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      background-color: #2c3e50;
+      border-radius: 15px;
+      aspect-ratio: 1/1;
+      width: 100%;
+      max-width: 300px;
+      padding: 0;
+      gap: 2px; /* Added gap to make grid lines visible */
+      border: 8px solid #2c3e50;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      overflow: hidden; /* Ensures the inner borders don't overflow */
+    }
+
+    .cell {
+      background-color: #ecf0f1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 3em;
+      font-weight: bold;
+      cursor: pointer;
+      aspect-ratio: 1/1;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    /* Add inner borders to cells */
+    .cell:nth-child(3n+2) {
+      border-left: 2px solid #bdc3c7;
+      border-right: 2px solid #bdc3c7;
+    }
+    
+    .cell:nth-child(n+4):nth-child(-n+6) {
+      border-top: 2px solid #bdc3c7;
+      border-bottom: 2px solid #bdc3c7;
+    }
+
+    .cell[data-cell]:hover {
+      background-color: #dfe6e9;
+      transform: scale(1.02);
+    }
+
+    .cell.x {
+      color: #e74c3c;
+    }
+
+    .cell.o {
+      color: #3498db;
+    }
+
+    .restart-btn {
+      margin: 25px 0;
+      background-color: #ffcc00;
+      color: #2c3e50;
+      border: none;
+      padding: 12px 25px;
+      font-size: 1.1em;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 50px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .restart-btn:hover {
+      background-color: #ffd633;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    }
+
+    .result-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.9);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      color: #fff;
+      display: none;
+      z-index: 100;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+
+    .result-screen.show {
+      display: flex;
+      opacity: 1;
+    }
+
+    .result-screen p {
+      font-size: 2.5em;
+      margin-bottom: 30px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .result-screen button {
+      background-color: #ffcc00;
+      color: #2c3e50;
+      border: none;
+      padding: 12px 30px;
+      font-size: 1.1em;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 50px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .result-screen button:hover {
+      background-color: #ffd633;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    }
+
+    @media (max-width: 400px) {
+      h1 {
+        font-size: 2.2em;
+      }
+      
+      .cell {
+        font-size: 2.5em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>X / O</h1>
+    <p class="signature">Developed by <span>Dushyant</span></p>
+  </header>
+  <div class="container">
+    <div class="board">
+      <div class="cell" data-cell></div>
+      <div class="cell" data-cell></div>
+      <div class="cell" data-cell></div>
+      <div class="cell" data-cell></div>
+      <div class="cell" data-cell></div>
+      <div class="cell" data-cell></div>
+      <div class="cell" data-cell></div>
+      <div class="cell" data-cell></div>
+      <div class="cell" data-cell></div>
+    </div>
+    <button id="restartButton" class="restart-btn">Clear Board</button>
+  </div>
+
+  <div class="result-screen" id="resultScreen">
+    <p id="resultText"></p>
+    <button id="newGameButton">Play Again</button>
+  </div>
+
+  <script>
+    const cells = document.querySelectorAll('[data-cell]');
+    const resultScreen = document.getElementById('resultScreen');
+    const resultText = document.getElementById('resultText');
+    const newGameButton = document.getElementById('newGameButton');
+    const restartButton = document.getElementById('restartButton');
+
+    let currentPlayer = 'X';
+    let board = Array(9).fill(null);
+
+    const winningCombinations = [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      [0, 4, 8],
+      [2, 4, 6],
+    ];
+
+    function handleClick(cell, index) {
+      if (board[index] || resultScreen.style.display === 'flex') return;
+
+      board[index] = currentPlayer;
+      cell.textContent = currentPlayer;
+      cell.classList.add(currentPlayer.toLowerCase()); // Add class for X or O
+
+      if (checkWin(currentPlayer)) {
+        showResult(`${currentPlayer} Wins!`);
+      } else if (board.every(cell => cell !== null)) {
+        showResult("It's a Draw!");
+      } else {
+        currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+      }
+    }
+
+    function checkWin(player) {
+      return winningCombinations.some(combination =>
+        combination.every(index => board[index] === player)
+      );
+    }
+
+    function showResult(message) {
+      resultText.textContent = message;
+      resultScreen.style.display = 'flex';
+      setTimeout(() => {
+        resultScreen.style.opacity = '1';
+      }, 10);
+    }
+
+    function resetGame() {
+      board.fill(null);
+      currentPlayer = 'X';
+      resultScreen.style.display = 'none';
+      resultScreen.style.opacity = '0';
+      cells.forEach(cell => {
+        cell.textContent = '';
+        cell.classList.remove('x', 'o');
+      });
+    }
+
+    // Add event listeners to cells and buttons
+    function initializeGame() {
+      cells.forEach((cell, index) => {
+        cell.textContent = '';
+        cell.classList.remove('x', 'o');
+        cell.removeEventListener('click', handleClick);
+        cell.addEventListener('click', () => handleClick(cell, index), { once: true });
+      });
+    }
+
+    newGameButton.addEventListener('click', () => {
+      resetGame();
+      initializeGame();
+    });
+
+    restartButton.addEventListener('click', () => {
+      resetGame();
+      initializeGame();
+    });
+
+    // Initialize the game on page load
+    initializeGame();
+  </script>
+</body>
+</html>
